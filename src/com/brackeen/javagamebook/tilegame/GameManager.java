@@ -29,7 +29,7 @@ public class GameManager extends GameCore {
 
     private static final int DRUM_TRACK = 1;
 
-    public static final float GRAVITY = 0.002f;
+    public static final float GRAVITY = 0.02f;
 
     private Point pointCache = new Point();
     private TileMap map;
