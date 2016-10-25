@@ -38,12 +38,18 @@ public class GameManager extends GameCore {
     private ResourceManager resourceManager;
     private Sound prizeSound;
     private Sound boopSound;
+    private Sound hitSound;
+    private Sound deathSound;
+    private Sound shroomTrippinSound;
+    private Sound shootSound;
+    private Sound hitSelfSound;
     private InputManager inputManager;
     private TileMapRenderer renderer;
 
     private GameAction moveLeft;
     private GameAction moveRight;
     private GameAction jump;
+    private GameAction shootAuto;
     private GameAction exit;
 
 
@@ -69,6 +75,11 @@ public class GameManager extends GameCore {
         soundManager = new SoundManager(PLAYBACK_FORMAT);
         prizeSound = soundManager.getSound("sounds/prize.wav");
         boopSound = soundManager.getSound("sounds/boop2.wav");
+//        hitEnemySound = soundManager.getSound("sounds/hitEnemy.wav");
+//        hitSelfSound = soundManager.getSound("sounds/hitSelf.wav");
+//        deathSound = soundManager.getSound("sounds/death.wav");
+//        shroomTrippinSound = soundManager.getSound("sounds/prize.wav");
+//        shootSound = soundManager.getSound("sounds/prize.wav");
 
         // start music
         midiPlayer = new MidiPlayer();
@@ -96,7 +107,9 @@ public class GameManager extends GameCore {
             GameAction.DETECT_INITAL_PRESS_ONLY);
         exit = new GameAction("exit",
             GameAction.DETECT_INITAL_PRESS_ONLY);
-
+        
+        shootAuto = new GameAction("shootAuto");
+        
         inputManager = new InputManager(
             screen.getFullScreenWindow());
         inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
@@ -105,6 +118,8 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
         inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
+        inputManager.mapToKey(shootAuto, KeyEvent.VK_S);	 	//map shoot to s
+        
     }
 
 
@@ -126,6 +141,9 @@ public class GameManager extends GameCore {
             if (jump.isPressed()) {
                 player.jump(false);
             }
+//            if (shootAuto.isPressed())){
+//            	player.shoot(true);
+//            }
             player.setVelocityX(velocityX);
         }
 
@@ -417,6 +435,9 @@ public class GameManager extends GameCore {
                 new EchoFilter(2000, .7f), false);
             map = resourceManager.loadNextMap();
         }
+//        else if (powerUp instanceof PowerUp.Shroom) {
+//        	soundManager.play(shroomTrippinSound);
+//        }
     }
 
 }
