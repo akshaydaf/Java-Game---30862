@@ -28,6 +28,7 @@ public class ResourceManager {
     private Sprite goalSprite;
     private Sprite grubSprite;
     private Sprite flySprite;
+//    private Sprite shroomSprite;
 
     /**
         Creates a new ResourceManager with the specified
@@ -341,6 +342,14 @@ public class ResourceManager {
         anim.addFrame(loadImage("music3.png"), 150);
         anim.addFrame(loadImage("music2.png"), 150);
         musicSprite = new PowerUp.Music(anim);
+        
+//        //create "Shroom" sprite
+//        anim = new Animation();
+//        anim.addFrame(loadImage("shroom1.png"), 150);
+//        anim.addFrame(loadImage("shroom2.png"), 150);
+//        anim.addFrame(loadImage("shroom3.png"), 150);
+//        anim.addFrame(loadImage("shroom2.png"), 150);
+//        shroomSprite = new PowerUp.Shroom(anim);
     }
 
 }
