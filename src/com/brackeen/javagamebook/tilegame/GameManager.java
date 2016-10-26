@@ -141,9 +141,9 @@ public class GameManager extends GameCore {
             if (jump.isPressed()) {
                 player.jump(false);
             }
-//            if (shootAuto.isPressed())){
+            if (shootAuto.isPressed()){
 //            	player.shoot(true);
-//            }
+            }
             player.setVelocityX(velocityX);
         }
 

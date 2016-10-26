@@ -57,7 +57,9 @@ public class Player extends Creature {
         }
     }
 
-
+    public void shoot(){
+    	
+    }
     public float getMaxSpeed() {
         return 0.5f;
     }
