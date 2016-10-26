@@ -145,7 +145,7 @@ public class GameManager extends GameCore {
             }
             if (shoot.isPressed()){
             	player.shoot(true);
-            	resourceManager.addAttackBull(map, player.getX(), player.getY());
+            	resourceManager.addAttackBull(map, player.getX(), player.getY(), player.lastFacing);
             }
             player.setVelocityX(velocityX);
         }

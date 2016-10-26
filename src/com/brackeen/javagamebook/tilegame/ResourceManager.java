@@ -189,7 +189,7 @@ public class ResourceManager {
     }
 
 
-    public void addAttackBull(TileMap map, float x, float y){
+    public void addAttackBull(TileMap map, float x, float y, boolean direc){
         if (bullSprite != null) {
             // clone the sprite from the "host"
             Sprite sprite = (Sprite)bullSprite.clone();
@@ -199,6 +199,13 @@ public class ResourceManager {
 
             // bottom-justify the sprite
             sprite.setY(y);
+            
+            // set velocity
+            if (direc){
+            	sprite.setVelocityX(1);	
+            } else {
+            	sprite.setVelocityX(-1);
+            }
 
             // add it to the map
             map.addSprite(sprite);
@@ -255,7 +262,11 @@ public class ResourceManager {
     }
 
     public void loadCreatureSprites() {
-    	loadBulletSprite();
+    	//loadBulletSprite();
+    	Animation bullAnim = new Animation();
+    	bullAnim = createBullAnim();
+        bullSprite = new Bullet(bullAnim);
+        
         Image[][] images = new Image[4][];
 
         // load left-facing images
