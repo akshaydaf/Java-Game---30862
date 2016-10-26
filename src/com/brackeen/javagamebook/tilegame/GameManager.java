@@ -49,7 +49,7 @@ public class GameManager extends GameCore {
     private GameAction moveLeft;
     private GameAction moveRight;
     private GameAction jump;
-    private GameAction shootAuto;
+    private GameAction shoot;
     private GameAction exit;
 
 
@@ -108,7 +108,7 @@ public class GameManager extends GameCore {
         exit = new GameAction("exit",
             GameAction.DETECT_INITAL_PRESS_ONLY);
         
-        shootAuto = new GameAction("shootAuto");
+        shoot = new GameAction("shoot");
         
         inputManager = new InputManager(
             screen.getFullScreenWindow());
@@ -118,7 +118,7 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
         inputManager.mapToKey(jump, KeyEvent.VK_SPACE);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
-        inputManager.mapToKey(shootAuto, KeyEvent.VK_S);	 	//map shoot to s
+        inputManager.mapToKey(shoot, KeyEvent.VK_S);	 	//map shoot to s
         
     }
 
@@ -134,21 +134,23 @@ public class GameManager extends GameCore {
             float velocityX = 0;
             if (moveLeft.isPressed()) {
                 velocityX-=player.getMaxSpeed();
+                player.lastFacing = false;
             }
             if (moveRight.isPressed()) {
                 velocityX+=player.getMaxSpeed();
+                player.lastFacing = true;
             }
             if (jump.isPressed()) {
                 player.jump(false);
             }
-            if (shootAuto.isPressed()){
-//            	player.shoot(true);
+            if (shoot.isPressed()){
+            	player.shoot(true);
+            	resourceManager.addAttackBull(map, player.getX(), player.getY());
             }
             player.setVelocityX(velocityX);
         }
 
     }
-
 
     public void draw(Graphics2D g) {
         renderer.draw(g, map,
@@ -288,8 +290,10 @@ public class GameManager extends GameCore {
 
         // update player
         updateCreature(player, elapsedTime);
+        
         player.update(elapsedTime);
-
+        
+        
         // update other sprites
         Iterator i = map.getSprites();
         while (i.hasNext()) {
@@ -303,6 +307,13 @@ public class GameManager extends GameCore {
                     updateCreature(creature, elapsedTime);
                 }
             }
+            else if (sprite instanceof Bullet){
+            	Bullet bullet = (Bullet)sprite;
+            	if (bullet.getState() == Bullet.STATE_DEAD){
+            		i.remove();
+            	}
+            	updateBullet((Player) player, bullet, elapsedTime);
+            }
             // normal update
             sprite.update(elapsedTime);
         }
@@ -313,6 +324,43 @@ public class GameManager extends GameCore {
         Updates the creature, applying gravity for creatures that
         aren't flying, and checks collisions.
     */
+    private void updateBullet(Player player, Bullet bullet, long elapsedTime){ 	
+    	if (bullet.status == false) {
+    		bullet.status = true;
+    		if (player.lastFacing == true){
+    			bullet.setVelocityX((float) 1.0);
+    		}
+    		else {
+    			bullet.setVelocityX((float) -1.0);
+    		}
+    	}
+    	else {
+    		float dx = bullet.getVelocityX();
+    		float oldX = bullet.getX();
+    		float newX = oldX + dx * elapsedTime;
+    		Point tile =
+    				getTileCollision(bullet, newX, bullet.getY());
+    		if (tile == null) {
+    			bullet.setX(newX);
+    		}
+    		else {
+    			// line up with the tile boundary
+    			if (dx > 0) {
+    				bullet.setX(
+    						TileMapRenderer.tilesToPixels(tile.x) -
+    						bullet.getWidth());
+    			}
+    			else if (dx < 0) {
+    				bullet.setX(
+    						TileMapRenderer.tilesToPixels(tile.x + 1));
+    			}	
+    			bullet.state = Bullet.STATE_DYING;
+    			bullet.setVelocityX(0);
+    			//bullet.collideHorizontal();
+    		}	
+    	}
+    }
+    
     private void updateCreature(Creature creature,
         long elapsedTime)
     {
@@ -408,6 +456,17 @@ public class GameManager extends GameCore {
                 // player dies!
                 player.setState(Creature.STATE_DYING);
             }
+        }
+        else if (collisionSprite instanceof Bullet){
+        	Bullet bullet = (Bullet)collisionSprite;
+        	//soundManager.play(hitSelfSound);
+        	bullet.setState(Bullet.STATE_DYING);
+        	
+        	player.adjustHealth(-5);
+        	if(player.getHealth() <= 0){
+        		player.setHealth(0);
+        		player.setState(Creature.STATE_DYING);
+        	}
         }
     }
 
