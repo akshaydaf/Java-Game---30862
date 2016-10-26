@@ -10,6 +10,7 @@ public class Player extends Creature {
     private static final float JUMP_SPEED = -.95f;
 
     private boolean onGround;
+    private int health;
 
     public Player(Animation left, Animation right,
         Animation deadLeft, Animation deadRight)
@@ -21,7 +22,18 @@ public class Player extends Creature {
     public void collideHorizontal() {
         setVelocityX(0);
     }
-
+    
+    public int getHealth(){
+    	return this.health;
+    }
+    
+    public void adjustHealth(int dmg) {
+    	this.health += dmg;
+    	if (this.health <= 0){
+    		this.health = 0;
+    		this.setState(STATE_DYING);
+    	}
+    }
 
     public void collideVertical() {
         // check if collided with ground
