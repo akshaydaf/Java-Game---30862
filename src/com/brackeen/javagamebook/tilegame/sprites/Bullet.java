@@ -11,7 +11,7 @@ public class Bullet extends Sprite {
 	private float xpos;
 	private float dx;
 	public float getX() {
-		return 0;
+		return this.xpos;
         //current position of the player, where the bullet will come from
     }
 	public void setX(float xpos){
