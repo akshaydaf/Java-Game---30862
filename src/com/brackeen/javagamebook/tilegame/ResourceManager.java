@@ -28,7 +28,8 @@ public class ResourceManager {
     private Sprite goalSprite;
     private Sprite grubSprite;
     private Sprite flySprite;
-//    private Sprite shroomSprite;
+    private Sprite shroomSprite;
+    private Sprite bullSprite;
 
     /**
         Creates a new ResourceManager with the specified
@@ -147,6 +148,7 @@ public class ResourceManager {
         // parse the lines to create a TileEngine
         height = lines.size();
         TileMap newMap = new TileMap(width, height);
+        addSprite(newMap, bullSprite, 5,5);				//remove later
         for (int y=0; y<height; y++) {
             String line = (String)lines.get(y);
             for (int x=0; x<line.length(); x++) {
@@ -187,6 +189,21 @@ public class ResourceManager {
     }
 
 
+    public void addAttackBull(TileMap map, float x, float y){
+        if (bullSprite != null) {
+            // clone the sprite from the "host"
+            Sprite sprite = (Sprite)bullSprite.clone();
+
+            // center the sprite
+            sprite.setX(x);
+
+            // bottom-justify the sprite
+            sprite.setY(y);
+
+            // add it to the map
+            map.addSprite(sprite);
+        }
+    }
     private void addSprite(TileMap map,
         Sprite hostSprite, int tileX, int tileY)
     {
@@ -231,10 +248,14 @@ public class ResourceManager {
             ch++;
         }
     }
-
+	public void loadBulletSprite() {
+    	Animation bullAnim = new Animation();
+    	bullAnim = createBullAnim();
+        bullSprite = new Bullet(bullAnim);
+    }
 
     public void loadCreatureSprites() {
-
+    	loadBulletSprite();
         Image[][] images = new Image[4][];
 
         // load left-facing images
@@ -247,6 +268,7 @@ public class ResourceManager {
             loadImage("fly3.png"),
             loadImage("grub1.png"),
             loadImage("grub2.png"),
+        
         };
 
         images[1] = new Image[images[0].length];
@@ -265,6 +287,7 @@ public class ResourceManager {
         Animation[] playerAnim = new Animation[4];
         Animation[] flyAnim = new Animation[4];
         Animation[] grubAnim = new Animation[4];
+//        Animation[] bullAnim = new Animation[4];
         for (int i=0; i<4; i++) {
             playerAnim[i] = createPlayerAnim(
                 images[i][0], images[i][1], images[i][2]);
@@ -316,6 +339,13 @@ public class ResourceManager {
         anim.addFrame(img2, 250);
         return anim;
     }
+    
+    private Animation createBullAnim() {
+        Animation anim = new Animation();
+        anim.addFrame(loadImage("bullet.png"), 250);
+        anim.addFrame(loadImage("bullet.png"), 250);
+        return anim;
+    }
 
 
     private void loadPowerUpSprites() {
@@ -351,5 +381,8 @@ public class ResourceManager {
 //        anim.addFrame(loadImage("shroom2.png"), 150);
 //        shroomSprite = new PowerUp.Shroom(anim);
     }
+
+
+
 
 }
