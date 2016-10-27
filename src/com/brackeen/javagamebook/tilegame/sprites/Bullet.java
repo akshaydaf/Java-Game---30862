@@ -39,30 +39,10 @@ public class Bullet extends Sprite {
         }
     }
     
-//    public void wakeUp(boolean direc) {
-//        if (getState() == STATE_NORMAL && getVelocityX() == 0) {
-//        	if (direc == true){ //right
-//        		setVelocityX(bulletspeed);
-//        	}
-//        	else {
-//        		setVelocityX(-bulletspeed);
-//        	}
-////        }
-//    }
-    
 	public int getState() {
 		return this.state;
 	}
-//	public float getX() {
-//		return this.xpos;
-//        //current position of the player, where the bullet will come from
-//    }
-//	public void setX(float xpos){
-//		this.xpos = xpos;
-//	}
-//	public void setY(float ypos){
-//		this.ypos = ypos;
-//	}	
+	
 	
     public void update(long elapsedTime) {
         // select the correct Animation

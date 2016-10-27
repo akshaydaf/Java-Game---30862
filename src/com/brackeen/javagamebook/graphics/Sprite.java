@@ -11,22 +11,160 @@ public class Sprite {
     // velocity (pixels per millisecond)
     private float dx;
     private float dy;
-
+    private int health;
+    private int ammo;
+    
+    private int fireMode;
+    
+    public static final int MAX_HEALTH = 40;
+    public static final int MAX_BULLETS = 10;
+    
+    public static final int HOLDTIME = 1000;
+    public static final int RELOADTIME = 1000;
+    public static final int AUTOTIME = 500;
+    public static final int SINGLETIME = 250;
+    
+    private boolean fireEN;
+    
+    public static final int MAN = 0;
+    public static final int HOLD_WAIT = 1;
+    public static final int AUTO = 2;
+    public static final int RELOAD = 3;
+    private long holdTimer;	//how long the button has been held
+    private long reloadTimer;
+    private long autoTimer;
+    private long singleTimer;
+    private boolean firePressed;
+    private boolean firstShot;
+    
+    
+    
+    
+    //PLAYER SHIT
+    
+    public long getHoldTimer(){
+    	return this.holdTimer;
+    }
+    public long getReloadTimer(){
+    	return this.reloadTimer;
+    }
+    public long getAutoTimer(){
+    	return this.autoTimer;
+    }
+    public long getSingleTimer(){
+    	return this.singleTimer;
+    }
+    public void setFirePressed(boolean pressed){
+    	this.firePressed = pressed;
+    }
+    public boolean getFirePressed(){
+    	return (this.firePressed);
+    }
+    public void setFireEN(boolean en){
+    	this.firePressed = en;
+    }
+    public boolean getFireen(){
+    	return (this.fireEN);
+    }
+    
+    public int getHealth(){
+    	return this.health;
+    }  
+    public void setHealth(int newHealth){
+    	this.health = newHealth;
+    }
+    public void adjustHealth(int dmg) {
+    	this.health += dmg;
+    	if (this.health > 40) {
+    		this.health = 40;
+    	}
+    }
+    public int getGunMode(){
+    	return this.fireMode;
+    }
+    public int getAmmo(){
+    	return this.ammo;
+    }
+    
+    
+    
     /**
         Creates a new Sprite object with the specified Animation.
     */
     public Sprite(Animation anim) {
         this.anim = anim;
+        health = 20;
+        fireEN = true;
+        fireMode = HOLD_WAIT;
+        holdTimer = 0;	//how long the button has been held
+        reloadTimer = 0;
+        autoTimer = 0;
+        singleTimer = 0;
+        firePressed = false;
+        firstShot = true;
     }
 
     /**
         Updates this Sprite's Animation and its position based
         on the velocity.
     */
-    public void update(long elapsedTime) {
+    public void update(long elapsedTime) {         //ALSO UPDATE STATE MACHINE SHIT YO
         x += dx * elapsedTime;
         y += dy * elapsedTime;
         anim.update(elapsedTime);
+        System.out.println(elapsedTime);
+    }
+    
+    public void updateGun(long elapsedTime) {
+        if (this.fireMode == HOLD_WAIT){
+        	if (this.firstShot){
+        		this.firstShot = false;
+        		this.fireEN = true;
+        	}
+        	if (this.holdTimer > HOLDTIME){
+        		this.fireMode = AUTO;
+        		this.holdTimer = 0;
+        		this.firstShot = true;
+        	}
+        	else if (this.firePressed == false){
+        		this.holdTimer = 0;
+        		this.firstShot = true;
+        		this.fireEN = true;
+        	}
+        	else if (this.firePressed == true){
+        		this.holdTimer += elapsedTime;
+        	}
+        }
+        else if (this.fireMode == AUTO){
+        	if (this.firePressed == false){
+        		this.holdTimer = 0;
+        		this.fireMode = HOLD_WAIT;
+        		this.autoTimer = 0;
+        	}
+        	else if (this.firePressed == true){
+        		this.autoTimer += elapsedTime;
+        		if (this.autoTimer >= AUTOTIME){
+        			this.autoTimer = 0;
+        			this.fireEN = true;
+        		}
+        	}
+        }
+        else if (this.fireMode == RELOAD){
+        	if (this.firePressed){
+        		this.reloadTimer += elapsedTime;
+        		if (this.reloadTimer >= RELOADTIME){
+        			this.reloadTimer = 0;
+        			this.fireEN = true;
+        			this.ammo = MAX_BULLETS;
+        			this.fireMode = AUTO;
+        		}
+        	} else {
+        		this.fireMode = HOLD_WAIT;
+        		this.reloadTimer = 0;
+        		this.autoTimer = 0;
+        		this.holdTimer = 0;
+        	}
+        }
     }
 
     /**

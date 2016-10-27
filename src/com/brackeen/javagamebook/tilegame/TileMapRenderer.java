@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import com.brackeen.javagamebook.graphics.Sprite;
 import com.brackeen.javagamebook.tilegame.sprites.Creature;
+import com.brackeen.javagamebook.tilegame.sprites.Player;
 
 /**
     The TileMapRenderer class draws a TileMap on the screen.
@@ -147,6 +148,38 @@ public class TileMapRenderer {
                 ((Creature)sprite).wakeUp();
             }
         }
+        g.drawImage(null,  100, 10, null);
+        g.setColor(Color.GREEN);
+        g.drawString("Vitality: " + player.getHealth(), 70, 100);
+        g.drawImage(null,  100, 40, null);
+        g.setColor(Color.GREEN);
+        g.drawString("Remaining Burst: " + player.getAmmo(), 70, 125);
+        
+        g.drawImage(null,  100, 40, null);
+        g.setColor(Color.GREEN);
+        if (player.getFireen()){
+        	g.drawString("FIRE READY", 70, 150);
+        }
+        else {
+        	g.drawString("BUSY", 70, 150);
+        }
+        if (player.getFirePressed()){
+        	g.drawString("FirePressed: True", 70, 175);
+        }
+        else {
+        	g.drawString("FirePressed: False", 70, 175);
+        }
+        
+        g.drawString("Mode: " + player.getGunMode(), 70, 200);
+        
+ 
+        g.drawString("Hold:" + player.getHoldTimer(), 70, 225);
+        g.drawString("Reload: " + player.getReloadTimer(), 70, 250);
+        g.drawString("Auto: " + player.getAutoTimer(), 70, 275);
+        //g.drawString("Single: " + player.getSingleTimer(), 70, 300);
+        //g.drawString("Single: " + player.elapsedTime, 70, 300);
+//        g.drawString("", 70, 325)
+//        g.drawString("", 70, 400)
     }
 
 }
