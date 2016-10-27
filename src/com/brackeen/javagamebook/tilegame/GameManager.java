@@ -148,10 +148,10 @@ public class GameManager extends GameCore {
 				player.setFirePressed(true);
 				
 				if (player.lastFacing && shottimer == 0 || ((player.getAutoTimer() == 0) && (player.getGunMode() == Player.AUTO))){
-					resourceManager.addAttackBull(map, player.getX() + 60, player.getY() + 25, player.lastFacing);
+					resourceManager.addAttackBull(map, player.getX() + 60, player.getY() + 25, player.lastFacing, true);
 				}
 				else if (shottimer == 0 || ((player.getAutoTimer() == 0) && (player.getGunMode() == Player.AUTO))) {
-					resourceManager.addAttackBull(map, player.getX(), player.getY() + 25, player.lastFacing);
+					resourceManager.addAttackBull(map, player.getX(), player.getY() + 25, player.lastFacing, true);
 				}
 				shottimer+=elapsedTime;
 			}
@@ -313,6 +313,7 @@ public class GameManager extends GameCore {
 			Sprite sprite = (Sprite)i.next();
 			if (sprite instanceof Creature) {
 				Creature creature = (Creature)sprite;
+				checkCreatureCollision(creature);
 				if (creature.getState() == Creature.STATE_DEAD) {
 					i.remove();
 					player.adjustHealth(10);
@@ -321,7 +322,7 @@ public class GameManager extends GameCore {
 					updateCreature(creature, elapsedTime);
 				}
 			}
-			else if (sprite instanceof Bullet){
+			else if (sprite instanceof Bullet){//destroying used bullets, updating bullet positions
 				Bullet bullet = (Bullet)sprite;
 				if (bullet.getState() == Bullet.STATE_DEAD){
 					i.remove();
@@ -330,8 +331,10 @@ public class GameManager extends GameCore {
 					updateBullet((Player) player, bullet, elapsedTime);
 				}
 			}
-			// normal update
-			sprite.update(elapsedTime);
+//			else{
+//			normal update
+				sprite.update(elapsedTime);
+//			}
 		}
 	}
 
@@ -351,40 +354,12 @@ public class GameManager extends GameCore {
 		else {
 			// line up with the tile boundary
 			if (dx > 0) {
-				bullet.setX(
-						TileMapRenderer.tilesToPixels(tile.x) -
-						bullet.getWidth());
+				bullet.setX(TileMapRenderer.tilesToPixels(tile.x) - bullet.getWidth());
 			}
 			else if (dx < 0) {
-				bullet.setX(
-						TileMapRenderer.tilesToPixels(tile.x + 1));
+				bullet.setX(TileMapRenderer.tilesToPixels(tile.x + 1));
 			}	
-			bullet.setState(Bullet.STATE_DYING);
-			bullet.setVelocityX(0);
-			//bullet.collide();	
-		}
-		
-		
-		// change y
-		float dy = bullet.getVelocityY();
-		float oldY = bullet.getY();
-		float newY = oldY + dy * elapsedTime;
-		tile = getTileCollision(bullet, bullet.getX(), newY);
-		if (tile == null) {
-			bullet.setY(newY);
-		}
-		else {
-			// line up with the tile boundary
-			if (dy > 0) {
-				bullet.setY(
-						TileMapRenderer.tilesToPixels(tile.y) -
-						bullet.getHeight());
-			}
-			else if (dy < 0) {
-				bullet.setY(
-						TileMapRenderer.tilesToPixels(tile.y + 1));
-			}
-			//bullet.collideVertical();
+			bullet.collide();	
 		}
 	}
 
@@ -423,6 +398,7 @@ public class GameManager extends GameCore {
 			checkPlayerCollision((Player)creature, false);
 		}
 
+
 		// change y
 		float dy = creature.getVelocityY();
 		float oldY = creature.getY();
@@ -452,6 +428,24 @@ public class GameManager extends GameCore {
 	}
 
 
+	public void checkCreatureCollision(Creature creature)
+	{
+		if (!creature.isAlive()) {
+			return;
+		}
+
+		// check for player collision with other sprites
+		Sprite collisionSprite = getSpriteCollision(creature);
+
+		if (collisionSprite instanceof Bullet){
+			Bullet bullet = (Bullet)collisionSprite;
+			//soundManager.play(hitEnemySound);
+			if (bullet.friendly){
+				bullet.setState(Bullet.STATE_DYING);
+				creature.setState(Creature.STATE_DYING);
+			}
+		}
+	}
 	/**
         Checks for Player collision with other Sprites. If
         canKill is true, collisions with Creatures will kill
@@ -486,12 +480,14 @@ public class GameManager extends GameCore {
 		else if (collisionSprite instanceof Bullet){
 			Bullet bullet = (Bullet)collisionSprite;
 			//soundManager.play(hitSelfSound);
-			bullet.setState(Bullet.STATE_DYING);
+			if (!bullet.friendly){
+				bullet.setState(Bullet.STATE_DYING);
 
-			player.adjustHealth(-5);
-			if(player.getHealth() <= 0){
-				player.setHealth(0);
-				player.setState(Creature.STATE_DYING);
+				player.adjustHealth(-5);
+				if(player.getHealth() <= 0){
+					player.setHealth(0);
+					player.setState(Creature.STATE_DYING);
+				}
 			}
 		}
 	}

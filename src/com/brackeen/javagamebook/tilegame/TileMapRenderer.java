@@ -176,10 +176,7 @@ public class TileMapRenderer {
         g.drawString("Hold:" + player.getHoldTimer(), 70, 225);
         g.drawString("Reload: " + player.getReloadTimer(), 70, 250);
         g.drawString("Auto: " + player.getAutoTimer(), 70, 275);
-        //g.drawString("Single: " + player.getSingleTimer(), 70, 300);
-        //g.drawString("Single: " + player.elapsedTime, 70, 300);
-//        g.drawString("", 70, 325)
-//        g.drawString("", 70, 400)
+
     }
 
 }

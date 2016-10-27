@@ -189,11 +189,11 @@ public class ResourceManager {
     }
 
 
-    public void addAttackBull(TileMap map, float x, float y, boolean direc){
+    public void addAttackBull(TileMap map, float x, float y, boolean direc, boolean friend){
         if (bullSprite != null) {
             // clone the sprite from the "host"
             Sprite sprite = (Sprite)bullSprite.clone();
-
+            sprite.friendly = friend;
             // center the sprite
             sprite.setX(x);
 

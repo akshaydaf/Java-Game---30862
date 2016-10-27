@@ -36,6 +36,8 @@ public class Sprite {
     private long singleTimer;
     private boolean firePressed;
     private boolean firstShot;
+    public boolean friendly;
+    
     
     
     
@@ -102,20 +104,21 @@ public class Sprite {
         singleTimer = 0;
         firePressed = false;
         firstShot = true;
+        friendly = true;
     }
 
     /**
         Updates this Sprite's Animation and its position based
         on the velocity.
     */
-    public void update(long elapsedTime) {         //ALSO UPDATE STATE MACHINE SHIT YO
+    public void update(long elapsedTime) {         
         x += dx * elapsedTime;
         y += dy * elapsedTime;
         anim.update(elapsedTime);
         System.out.println(elapsedTime);
     }
     
-    public void updateGun(long elapsedTime) {
+    public void updateGun(long elapsedTime) {//ALSO UPDATE STATE MACHINE SHIT YO
         if (this.fireMode == HOLD_WAIT){
         	if (this.firstShot){
         		this.firstShot = false;
