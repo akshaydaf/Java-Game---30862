@@ -105,6 +105,7 @@ public class Sprite {
         firePressed = false;
         firstShot = true;
         friendly = true;
+        ammo = MAX_BULLETS;
     }
 
     /**
@@ -148,24 +149,33 @@ public class Sprite {
         		this.autoTimer += elapsedTime;
         		if (this.autoTimer >= AUTOTIME){
         			this.autoTimer = 0;
+        			this.ammo -= 1;
         			this.fireEN = true;
+        		}
+        		if(this.ammo <= 0){
+        			this.fireMode = RELOAD;
+        			this.ammo = 0;
         		}
         	}
         }
         else if (this.fireMode == RELOAD){
-        	if (this.firePressed){
-        		this.reloadTimer += elapsedTime;
-        		if (this.reloadTimer >= RELOADTIME){
-        			this.reloadTimer = 0;
-        			this.fireEN = true;
-        			this.ammo = MAX_BULLETS;
-        			this.fireMode = AUTO;
-        		}
-        	} else {
-        		this.fireMode = HOLD_WAIT;
+        	
+        	this.reloadTimer += elapsedTime;
+        	if (this.reloadTimer >= RELOADTIME){
         		this.reloadTimer = 0;
-        		this.autoTimer = 0;
-        		this.holdTimer = 0;
+        		this.fireEN = true;
+        		this.ammo = MAX_BULLETS;
+        		this.fireMode = AUTO;
+        		if (this.firePressed){
+        			fireMode = AUTO;
+        		} else {
+        			this.fireMode = HOLD_WAIT;
+        			this.reloadTimer = 0;
+        			this.autoTimer = 0;
+        			this.holdTimer = 0;
+        		}
+        	
+        		
         	}
         }
     }

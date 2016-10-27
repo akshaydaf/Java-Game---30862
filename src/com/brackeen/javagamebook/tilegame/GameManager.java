@@ -146,14 +146,15 @@ public class GameManager extends GameCore {
 			}
 			if (shoot.isPressed()){
 				player.setFirePressed(true);
-				
-				if (player.lastFacing && shottimer == 0 || ((player.getAutoTimer() == 0) && (player.getGunMode() == Player.AUTO))){
-					resourceManager.addAttackBull(map, player.getX() + 60, player.getY() + 25, player.lastFacing, true);
+				if (player.getGunMode() != Player.RELOAD){
+					if (player.lastFacing && shottimer == 0 || ((player.getAutoTimer() == 0) && (player.getGunMode() == Player.AUTO))){
+						resourceManager.addAttackBull(map, player.getX() + 60, player.getY() + 25, player.lastFacing, true);
+					}
+					else if (shottimer == 0 || ((player.getAutoTimer() == 0) && (player.getGunMode() == Player.AUTO))) {
+						resourceManager.addAttackBull(map, player.getX(), player.getY() + 25, player.lastFacing, true);
+					}
+					shottimer+=elapsedTime;
 				}
-				else if (shottimer == 0 || ((player.getAutoTimer() == 0) && (player.getGunMode() == Player.AUTO))) {
-					resourceManager.addAttackBull(map, player.getX(), player.getY() + 25, player.lastFacing, true);
-				}
-				shottimer+=elapsedTime;
 			}
 			else {//if shoot not pressed
 				player.setFirePressed(false);
