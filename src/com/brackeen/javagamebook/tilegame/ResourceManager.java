@@ -40,6 +40,7 @@ public class ResourceManager {
         loadTileImages();
         loadCreatureSprites();
         loadPowerUpSprites();
+        loadBulletSprite();
     }
 
 
@@ -148,7 +149,6 @@ public class ResourceManager {
         // parse the lines to create a TileEngine
         height = lines.size();
         TileMap newMap = new TileMap(width, height);
-        addSprite(newMap, bullSprite, 5,5);				//remove later
         for (int y=0; y<height; y++) {
             String line = (String)lines.get(y);
             for (int x=0; x<line.length(); x++) {
@@ -189,11 +189,11 @@ public class ResourceManager {
     }
 
 
-    public void addAttackBull(TileMap map, float x, float y, boolean direc){
+    public void addAttackBull(TileMap map, float x, float y, boolean direc, boolean friend){
         if (bullSprite != null) {
             // clone the sprite from the "host"
             Sprite sprite = (Sprite)bullSprite.clone();
-
+            sprite.friendly = friend;
             // center the sprite
             sprite.setX(x);
 
@@ -202,9 +202,9 @@ public class ResourceManager {
             
             // set velocity
             if (direc){
-            	sprite.setVelocityX(1);	
+            	sprite.setVelocityX((float) 0.75);	
             } else {
-            	sprite.setVelocityX(-1);
+            	sprite.setVelocityX((float) -0.75);
             }
 
             // add it to the map

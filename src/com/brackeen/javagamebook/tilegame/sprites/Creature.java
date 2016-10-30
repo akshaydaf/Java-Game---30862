@@ -14,7 +14,7 @@ public abstract class Creature extends Sprite {
         Amount of time to go from STATE_DYING to STATE_DEAD.
     */
     private static final int DIE_TIME = 1000;
-
+    private static final int WAIT_TIME = 500;
     public static final int STATE_NORMAL = 0;
     public static final int STATE_DYING = 1;
     public static final int STATE_DEAD = 2;
@@ -25,6 +25,12 @@ public abstract class Creature extends Sprite {
     private Animation deadRight;
     private int state;
     private long stateTime;
+    private long waitTime; 
+    public boolean creaturefire;
+    private boolean wake_en;
+    public boolean firedirect;
+    
+    public long autotimer2;
     //private int health;
 
     /**
@@ -39,6 +45,11 @@ public abstract class Creature extends Sprite {
         this.deadLeft = deadLeft;
         this.deadRight = deadRight;
         state = STATE_NORMAL;
+        waitTime = 0;
+        creaturefire = false;
+        wake_en = false;
+        firedirect = false; //false == left
+        autotimer2 = 0;
     }
 
 
@@ -60,7 +71,16 @@ public abstract class Creature extends Sprite {
         }
     }
 
-
+    public void updateCreatureGun(long elapsedTime){
+    	if (this.state == STATE_NORMAL && this.creaturefire){
+    		if (this.autotimer2 >= AUTOTIME * 2){
+    			this.autotimer2 = 0;
+    		}
+    		else{
+    			this.autotimer2 += elapsedTime;
+    		}
+    	}
+    }
     /**
         Gets the maximum speed of this Creature.
     */
@@ -76,6 +96,7 @@ public abstract class Creature extends Sprite {
     public void wakeUp() {
         if (getState() == STATE_NORMAL && getVelocityX() == 0) {
             setVelocityX(-getMaxSpeed());
+            this.wake_en = true;
         }
     }
 
@@ -172,6 +193,26 @@ public abstract class Creature extends Sprite {
         if (state == STATE_DYING && stateTime >= DIE_TIME) {
             setState(STATE_DEAD);
         }
+        
+        //update wake up timer
+        if (waitTime >= WAIT_TIME){
+        	this.creaturefire = true;
+        	this.waitTime = WAIT_TIME;
+        }
+        else if (wake_en){
+        	this.waitTime += elapsedTime;
+        	this.creaturefire = false;
+        }
+    }
+    public void getPlayerLoc(Creature player){
+    	if (player.getX() <= this.getX()){
+    		//player is on the left. Fire mode set to left
+    		firedirect = false;
+    	}
+    	else{
+    		//player is on the right
+    		firedirect = true;
+    	}
     }
 
 }
