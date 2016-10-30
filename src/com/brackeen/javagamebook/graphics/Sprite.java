@@ -37,6 +37,11 @@ public class Sprite {
     private boolean firePressed;
     private boolean firstShot;
     public boolean friendly;
+    public boolean enemyFireEN;
+    
+    
+    //HEALTH REGEN SHIT
+    public static final int IN_MOTION = 0;
     
     
     
@@ -106,6 +111,7 @@ public class Sprite {
         firstShot = true;
         friendly = true;
         ammo = MAX_BULLETS;
+        enemyFireEN = false;
     }
 
     /**
@@ -118,6 +124,7 @@ public class Sprite {
         anim.update(elapsedTime);
         System.out.println(elapsedTime);
     }
+
     
     public void updateGun(long elapsedTime) {//ALSO UPDATE STATE MACHINE SHIT YO
         if (this.fireMode == HOLD_WAIT){
@@ -129,6 +136,7 @@ public class Sprite {
         		this.fireMode = AUTO;
         		this.holdTimer = 0;
         		this.firstShot = true;
+        		this.enemyFireEN = !this.enemyFireEN;
         	}
         	else if (this.firePressed == false){
         		this.holdTimer = 0;

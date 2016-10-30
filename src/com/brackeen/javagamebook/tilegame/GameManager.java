@@ -3,6 +3,9 @@ package com.brackeen.javagamebook.tilegame;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
@@ -13,6 +16,7 @@ import com.brackeen.javagamebook.sound.*;
 import com.brackeen.javagamebook.input.*;
 import com.brackeen.javagamebook.test.GameCore;
 import com.brackeen.javagamebook.tilegame.sprites.*;
+import com.brackeen.javagamebook.tilegame.bulletQClass;
 
 /**
     GameManager manages all parts of the game.
@@ -290,7 +294,7 @@ public class GameManager extends GameCore {
 	 */
 	public void update(long elapsedTime) {
 		Creature player = (Creature)map.getPlayer();
-
+		Queue bulletQ = new LinkedList();
 
 		// player is dead! start map over
 		if (player.getState() == Creature.STATE_DEAD) {
@@ -321,6 +325,19 @@ public class GameManager extends GameCore {
 				}
 				else {
 					updateCreature(creature, elapsedTime);
+					if(creature.creaturefire){
+						creature.getPlayerLoc(player);
+						creature.updateCreatureGun(elapsedTime);
+						if (creature.autotimer2 == 0){
+							if (creature.getX() >= player.getX() && creature.getState() == Creature.STATE_NORMAL){
+								bulletQ.add(new bulletQClass(creature.getX() + 60, creature.getY() + 25,false));
+							}
+							else if (creature.getState() == Creature.STATE_NORMAL){
+								bulletQ.add(new bulletQClass(creature.getX(), creature.getY() + 25 ,true));
+							}
+						}
+						
+					}
 				}
 			}
 			else if (sprite instanceof Bullet){//destroying used bullets, updating bullet positions
@@ -332,10 +349,13 @@ public class GameManager extends GameCore {
 					updateBullet((Player) player, bullet, elapsedTime);
 				}
 			}
-//			else{
-//			normal update
 				sprite.update(elapsedTime);
-//			}
+		}
+		Iterator j = bulletQ.iterator();
+		while (j.hasNext()){
+			bulletQClass bcls = (bulletQClass) j.next();
+			resourceManager.addAttackBull(map, bcls.x, bcls.y, bcls.direc, false);
+			j.remove();
 		}
 	}
 
@@ -442,6 +462,7 @@ public class GameManager extends GameCore {
 			Bullet bullet = (Bullet)collisionSprite;
 			//soundManager.play(hitEnemySound);
 			if (bullet.friendly){
+				soundManager.play(boopSound);
 				bullet.setState(Bullet.STATE_DYING);
 				creature.setState(Creature.STATE_DYING);
 			}
@@ -481,7 +502,7 @@ public class GameManager extends GameCore {
 		else if (collisionSprite instanceof Bullet){
 			Bullet bullet = (Bullet)collisionSprite;
 			//soundManager.play(hitSelfSound);
-			if (!bullet.friendly){
+			if (!bullet.friendly && (bullet.getState() == Bullet.STATE_NORMAL)){
 				bullet.setState(Bullet.STATE_DYING);
 
 				player.adjustHealth(-5);
@@ -495,7 +516,7 @@ public class GameManager extends GameCore {
 
 
 	/**
-        Gives the player the speicifed power up and removes it
+        Gives the player the specified power up and removes it
         from the map.
 	 */
 	public void acquirePowerUp(PowerUp powerUp) {
