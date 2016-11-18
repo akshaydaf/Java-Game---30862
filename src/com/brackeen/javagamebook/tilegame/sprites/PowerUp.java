@@ -46,6 +46,12 @@ public abstract class PowerUp extends Sprite {
             super(anim);
         }
     }
+    
+    public static class Shroom extends PowerUp{
+    	public Shroom(Animation anim){
+    		super (anim);
+    	}
+    }
 
 
     /**

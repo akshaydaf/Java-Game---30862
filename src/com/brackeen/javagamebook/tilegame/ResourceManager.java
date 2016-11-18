@@ -170,6 +170,9 @@ public class ResourceManager {
                 else if (ch == '*') {
                     addSprite(newMap, goalSprite, x, y);
                 }
+                else if (ch == 's') {
+                	addSprite(newMap, shroomSprite, x, y);
+                }
                 else if (ch == '1') {
                     addSprite(newMap, grubSprite, x, y);
                 }
@@ -384,13 +387,10 @@ public class ResourceManager {
         anim.addFrame(loadImage("music2.png"), 150);
         musicSprite = new PowerUp.Music(anim);
         
-//        //create "Shroom" sprite
-//        anim = new Animation();
-//        anim.addFrame(loadImage("shroom1.png"), 150);
-//        anim.addFrame(loadImage("shroom2.png"), 150);
-//        anim.addFrame(loadImage("shroom3.png"), 150);
-//        anim.addFrame(loadImage("shroom2.png"), 150);
-//        shroomSprite = new PowerUp.Shroom(anim);
+        //create "Shroom" sprite
+        anim = new Animation();
+        anim.addFrame(loadImage("shroom.png"), 150);
+        shroomSprite = new PowerUp.Shroom(anim);
     }
 
 

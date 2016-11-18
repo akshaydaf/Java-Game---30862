@@ -87,7 +87,7 @@ public class GameManager extends GameCore {
 		// hitSound = soundManager.getSound("sounds/hitEnemy.wav");
 		//        hitSelfSound = soundManager.getSound("sounds/hitSelf.wav");
 		//        deathSound = soundManager.getSound("sounds/death.wav");
-		//        shroomTrippinSound = soundManager.getSound("sounds/prize.wav");
+		shroomTrippinSound = soundManager.getSound("sounds/shroom.wav");
 		//        shootSound = soundManager.getSound("sounds/prize.wav");
 
 		// start music
@@ -507,7 +507,7 @@ public class GameManager extends GameCore {
 		// check for player collision with other sprites
 		Sprite collisionSprite = getSpriteCollision(player);
 		if (collisionSprite instanceof PowerUp) {
-			acquirePowerUp((PowerUp)collisionSprite);
+			acquirePowerUp((PowerUp)collisionSprite, (Player) player);
 		}
 		else if (collisionSprite instanceof Creature) {
 			Creature badguy = (Creature)collisionSprite;
@@ -520,7 +520,12 @@ public class GameManager extends GameCore {
 			}
 			else {
 				// player dies!
-				player.setState(Creature.STATE_DYING);
+				if (player.getInv()){
+					badguy.setState(Creature.STATE_DYING);
+				}
+				else{
+					player.setState(Creature.STATE_DYING);
+				}
 			}
 		}
 		else if (collisionSprite instanceof Bullet){
@@ -543,13 +548,14 @@ public class GameManager extends GameCore {
         Gives the player the specified power up and removes it
         from the map.
 	 */
-	public void acquirePowerUp(PowerUp powerUp) {
+	public void acquirePowerUp(PowerUp powerUp, Player player) {
 		// remove it from the map
 		map.removeSprite(powerUp);
 
 		if (powerUp instanceof PowerUp.Star) {
 			// do something here, like give the player points
 			soundManager.play(prizeSound);
+			player.setInv(true);
 		}
 		else if (powerUp instanceof PowerUp.Music) {
 			// change the music
@@ -562,9 +568,11 @@ public class GameManager extends GameCore {
 					new EchoFilter(2000, .7f), false);
 			map = resourceManager.loadNextMap();
 		}
-		//        else if (powerUp instanceof PowerUp.Shroom) {
-		//        	soundManager.play(shroomTrippinSound);
-		//        }
+		else if (powerUp instanceof PowerUp.Shroom) {
+		    soundManager.play(shroomTrippinSound);
+			player.adjustHealth(+5);
+			
+		}
 	}
 
 }

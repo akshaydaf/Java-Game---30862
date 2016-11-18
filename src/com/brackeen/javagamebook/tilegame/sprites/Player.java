@@ -18,8 +18,10 @@ public class Player extends Creature {
         super(left, right, deadLeft, deadRight);
         onGround = true;
         lastFacing = true;
+        invinc = false;
         setFireEN(true);
     }
+    
 
     public boolean getOnGround(){
     	return onGround;

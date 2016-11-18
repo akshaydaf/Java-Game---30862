@@ -25,7 +25,7 @@ public class Sprite {
     public static final int AUTOTIME = 500;
     public static final int SINGLETIME = 250;
     public static final int HEALTHTIME = 1000; //timer to count to one second for the health
-    
+    public static final int INVINCETIME = 1000;
     private boolean fireEN;
     
     public static final int MAN = 0;
@@ -37,13 +37,13 @@ public class Sprite {
     private long autoTimer;
     private long singleTimer;
     private long healthtimer; //health timer, need to figure out how to check if character is moving
-    
+    private long invincetimer;
     private boolean firePressed;
     private boolean firstShot;
     public boolean friendly;
     public boolean enemyFireEN;
     
-    
+    public boolean invinc;    
     //HEALTH REGEN SHIT
     public static final int IN_MOTION = 0;
     
@@ -52,7 +52,13 @@ public class Sprite {
     
     
     //PLAYER SHIT
-    
+    public boolean getInv(){
+    	return invinc;
+    }
+    public void setInv(boolean invinceval){
+    	invinc = invinceval;
+    	invincetimer = INVINCETIME;
+    }
     public long getHoldTimer(){
     	return this.holdTimer;
     }
@@ -85,9 +91,11 @@ public class Sprite {
     	this.health = newHealth;
     }
     public void adjustHealth(int dmg) {
-    	this.health += dmg;
-    	if (this.health > 40) {
-    		this.health = 40;
+    	if (invinc == false){
+    		this.health += dmg;
+    		if (this.health > 40) {
+    			this.health = 40;
+    		}
     	}
     	
     }
@@ -129,6 +137,12 @@ public class Sprite {
         x += dx * elapsedTime;
         y += dy * elapsedTime;
         anim.update(elapsedTime);
+        if (invinc == true){
+        	invincetimer -= elapsedTime;
+        	if (invincetimer <= 0){
+        		invinc = false;
+        	}
+        }
         //System.out.println(elapsedTime);
     }
 
