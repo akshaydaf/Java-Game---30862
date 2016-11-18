@@ -21,7 +21,9 @@ public class Player extends Creature {
         setFireEN(true);
     }
 
-
+    public boolean getOnGround(){
+    	return onGround;
+    }
     public void collideHorizontal() {
         setVelocityX(0);
     }

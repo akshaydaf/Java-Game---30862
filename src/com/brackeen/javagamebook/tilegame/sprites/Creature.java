@@ -2,6 +2,7 @@ package com.brackeen.javagamebook.tilegame.sprites;
 
 import java.lang.reflect.Constructor;
 import com.brackeen.javagamebook.graphics.*;
+import com.brackeen.javagamebook.tilegame.TileMapRenderer;
 
 /**
     A Creature is a Sprite that is affected by gravity and can
@@ -31,6 +32,8 @@ public abstract class Creature extends Sprite {
     public boolean firedirect;
     
     public long autotimer2;
+    public long creaturex;
+    public long newcreaturex;
     //private int health;
 
     /**
@@ -50,6 +53,8 @@ public abstract class Creature extends Sprite {
         wake_en = false;
         firedirect = false; //false == left
         autotimer2 = 0;
+        creaturex = 0;
+        newcreaturex = 0;
     }
 
 
@@ -163,7 +168,7 @@ public abstract class Creature extends Sprite {
     /**
         Updates the animaton for this creature.
     */
-    public void update(long elapsedTime) {
+    public void update(long elapsedTime/*, float playerx*/) { 
         // select the correct Animation
         Animation newAnim = anim;
         if (getVelocityX() < 0) {
@@ -199,8 +204,13 @@ public abstract class Creature extends Sprite {
         	this.creaturefire = true;
         	this.waitTime = WAIT_TIME;
         }
+        else if (wake_en && (TileMapRenderer.pixelsToTiles(newcreaturex) >= creaturex + 2 || TileMapRenderer.pixelsToTiles(newcreaturex) <= creaturex - 2)){
+        	this.creaturefire = true;
+        }//changed this*/
         else if (wake_en){
         	this.waitTime += elapsedTime;
+            //creaturex = TileMapRenderer.pixelsToTiles(playerx); //changed this
+            //newcreaturex += this.getVelocityX() * elapsedTime; //changed this
         	this.creaturefire = false;
         }
     }

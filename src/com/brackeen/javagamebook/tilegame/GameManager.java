@@ -49,14 +49,18 @@ public class GameManager extends GameCore {
 	private Sound hitSelfSound;
 	private InputManager inputManager;
 	private TileMapRenderer renderer;
-
+    public static final int HEALTHTIME = 1000; //timer to count to one second for the health
+    
+    
 	private GameAction moveLeft;
 	private GameAction moveRight;
 	private GameAction jump;
 	private GameAction shoot;
 	private GameAction exit;
 	private long shottimer;
-
+	private long stilltimer;
+	private long prevtile;
+	private long currtile;
 
 	public void init() {
 		super.init();
@@ -80,7 +84,7 @@ public class GameManager extends GameCore {
 		soundManager = new SoundManager(PLAYBACK_FORMAT);
 		prizeSound = soundManager.getSound("sounds/prize.wav");
 		boopSound = soundManager.getSound("sounds/boop2.wav");
-		//        hitEnemySound = soundManager.getSound("sounds/hitEnemy.wav");
+		// hitSound = soundManager.getSound("sounds/hitEnemy.wav");
 		//        hitSelfSound = soundManager.getSound("sounds/hitSelf.wav");
 		//        deathSound = soundManager.getSound("sounds/death.wav");
 		//        shroomTrippinSound = soundManager.getSound("sounds/prize.wav");
@@ -92,6 +96,7 @@ public class GameManager extends GameCore {
 				midiPlayer.getSequence("sounds/music.midi");
 		midiPlayer.play(sequence, true);
 		toggleDrumPlayback();
+		stilltimer = -2000;
 	}
 
 
@@ -293,22 +298,41 @@ public class GameManager extends GameCore {
         in the current map.
 	 */
 	public void update(long elapsedTime) {
-		Creature player = (Creature)map.getPlayer();
+		Player player = (Player)map.getPlayer();
 		Queue bulletQ = new LinkedList();
 
 		// player is dead! start map over
 		if (player.getState() == Creature.STATE_DEAD) {
 			map = resourceManager.reloadMap();
+			stilltimer = 0;
+			prevtile = TileMapRenderer.pixelsToTiles(player.getX());
+			currtile = prevtile;
 			return;
 		}
-
+		if (player.getVelocityX() == 0 && player.getOnGround()){
+			stilltimer += elapsedTime;
+		}
+		else{
+			stilltimer = 0;
+		}
+		if (stilltimer >= HEALTHTIME){
+			stilltimer = 0;
+			player.adjustHealth(5);
+		}
+		if (prevtile != currtile){
+			player.adjustHealth(1);
+			prevtile = currtile;
+		}
+		else{
+			currtile = TileMapRenderer.pixelsToTiles(player.getX());
+		}
 		// get keyboard/mouse input
 		checkInput(elapsedTime);
 
 		// update player
 		updateCreature(player, elapsedTime);
 
-		player.update(elapsedTime);
+		player.update(elapsedTime/*, player.getX()*/);
 		player.updateGun(elapsedTime);
 
 
@@ -416,7 +440,7 @@ public class GameManager extends GameCore {
 			creature.collideHorizontal();
 		}
 		if (creature instanceof Player) {
-			checkPlayerCollision((Player)creature, false);
+			checkPlayerCollision((Player)creature, false, elapsedTime);
 		}
 
 
@@ -443,7 +467,7 @@ public class GameManager extends GameCore {
 		}
 		if (creature instanceof Player) {
 			boolean canKill = (oldY < creature.getY());
-			checkPlayerCollision((Player)creature, canKill);
+			checkPlayerCollision((Player)creature, canKill, elapsedTime);
 		}
 
 	}
@@ -474,7 +498,7 @@ public class GameManager extends GameCore {
         them.
 	 */
 	public void checkPlayerCollision(Player player,
-			boolean canKill)
+			boolean canKill, long elapsedTime)
 	{
 		if (!player.isAlive()) {
 			return;

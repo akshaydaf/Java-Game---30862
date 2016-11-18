@@ -7,6 +7,7 @@ public class Sprite {
     protected Animation anim;
     // position (pixels)
     private float x;
+    private float tempx;
     private float y;
     // velocity (pixels per millisecond)
     private float dx;
@@ -23,6 +24,7 @@ public class Sprite {
     public static final int RELOADTIME = 1000;
     public static final int AUTOTIME = 500;
     public static final int SINGLETIME = 250;
+    public static final int HEALTHTIME = 1000; //timer to count to one second for the health
     
     private boolean fireEN;
     
@@ -34,6 +36,8 @@ public class Sprite {
     private long reloadTimer;
     private long autoTimer;
     private long singleTimer;
+    private long healthtimer; //health timer, need to figure out how to check if character is moving
+    
     private boolean firePressed;
     private boolean firstShot;
     public boolean friendly;
@@ -85,6 +89,7 @@ public class Sprite {
     	if (this.health > 40) {
     		this.health = 40;
     	}
+    	
     }
     public int getGunMode(){
     	return this.fireMode;
@@ -112,6 +117,8 @@ public class Sprite {
         friendly = true;
         ammo = MAX_BULLETS;
         enemyFireEN = false;
+        tempx = 0;
+        healthtimer = 0;
     }
 
     /**
@@ -122,7 +129,7 @@ public class Sprite {
         x += dx * elapsedTime;
         y += dy * elapsedTime;
         anim.update(elapsedTime);
-        System.out.println(elapsedTime);
+        //System.out.println(elapsedTime);
     }
 
     
