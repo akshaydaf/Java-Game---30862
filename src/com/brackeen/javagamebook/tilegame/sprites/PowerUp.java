@@ -52,7 +52,17 @@ public abstract class PowerUp extends Sprite {
     		super (anim);
     	}
     }
-
+    public static class Gas extends PowerUp{
+    	public Gas(Animation anim){
+    		super(anim);
+    	}
+    }
+    
+    public static class Explosion extends PowerUp{
+    	public Explosion(Animation anim){
+    		super(anim);
+    	}
+    }
 
     /**
         A Goal PowerUp. Advances to the next map.

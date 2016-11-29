@@ -5,7 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
-
+import java.util.Scanner;
 import com.brackeen.javagamebook.graphics.*;
 import com.brackeen.javagamebook.tilegame.sprites.*;
 
@@ -29,6 +29,8 @@ public class ResourceManager {
     private Sprite grubSprite;
     private Sprite flySprite;
     private Sprite shroomSprite;
+    private Sprite gasSprite;
+    private Sprite explosion;
     private Sprite bullSprite;
 
     /**
@@ -89,11 +91,20 @@ public class ResourceManager {
 
     public TileMap loadNextMap() {
         TileMap map = null;
+        //Scanner scanner = new Scanner(System.in);
+        //System.out.print("Enter a File: ");
+        //String filename = scanner.next();
         while (map == null) {
             currentMap++;
             try {
+            	//if (filename == ""){
                 map = loadMap(
                     "maps/map" + currentMap + ".txt");
+            	//}
+            	//else{
+            	//	map = loadMap(filename);
+            		//currentMap = filename;
+            	//}
             }
             catch (IOException ex) {
                 if (currentMap == 1) {
@@ -159,7 +170,12 @@ public class ResourceManager {
                 if (tile >= 0 && tile < tiles.size()) {
                     newMap.setTile(x, y, (Image)tiles.get(tile));
                 }
-
+                else if (ch == 'g'){
+                	addSprite(newMap, gasSprite, x, y);
+                }
+                else if (ch == 'e'){
+                	addSprite(newMap, explosion, x, y);
+                }
                 // check if the char represents a sprite
                 else if (ch == 'o') {
                     addSprite(newMap, coinSprite, x, y);
@@ -391,6 +407,16 @@ public class ResourceManager {
         anim = new Animation();
         anim.addFrame(loadImage("shroom.png"), 150);
         shroomSprite = new PowerUp.Shroom(anim);
+        
+        //create "Gas" sprite (Actually a tile)
+        anim = new Animation();
+        anim.addFrame(loadImage("gas.png"), 150);
+        gasSprite = new PowerUp.Gas(anim);
+        
+        //create "Explosion" sprite (Actually a tile)
+        anim = new Animation();
+        anim.addFrame(loadImage("explosion.png"), 150);
+        explosion = new PowerUp.Explosion(anim);
     }
 
 

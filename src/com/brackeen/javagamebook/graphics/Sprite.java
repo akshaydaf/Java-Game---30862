@@ -26,6 +26,7 @@ public class Sprite {
     public static final int SINGLETIME = 250;
     public static final int HEALTHTIME = 1000; //timer to count to one second for the health
     public static final int INVINCETIME = 1000;
+    public static final int GUNOFFTIME = 1000;
     private boolean fireEN;
     
     public static final int MAN = 0;
@@ -38,11 +39,12 @@ public class Sprite {
     private long singleTimer;
     private long healthtimer; //health timer, need to figure out how to check if character is moving
     private long invincetimer;
+    private long gunofftimer;
     private boolean firePressed;
     private boolean firstShot;
     public boolean friendly;
     public boolean enemyFireEN;
-    
+    public boolean gunoff;
     public boolean invinc;    
     //HEALTH REGEN SHIT
     public static final int IN_MOTION = 0;
@@ -58,6 +60,10 @@ public class Sprite {
     public void setInv(boolean invinceval){
     	invinc = invinceval;
     	invincetimer = INVINCETIME;
+    }
+    public void setOff(boolean gunofftime){
+    	gunoff = gunofftime;
+    	gunofftimer = GUNOFFTIME;
     }
     public long getHoldTimer(){
     	return this.holdTimer;
@@ -98,6 +104,9 @@ public class Sprite {
     		}
     	}
     	
+    }
+    public void setGunMode(int mode){
+    	this.fireMode = mode;
     }
     public int getGunMode(){
     	return this.fireMode;
@@ -207,7 +216,7 @@ public class Sprite {
         		
         	}
         }
-    }
+	}
 
     /**
         Gets this Sprite's current x position.

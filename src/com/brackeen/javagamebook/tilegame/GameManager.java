@@ -573,6 +573,12 @@ public class GameManager extends GameCore {
 			player.adjustHealth(+5);
 			
 		}
+		else if (powerUp instanceof PowerUp.Gas){
+			player.setGunMode(Sprite.RELOAD);
+		}
+		else if (powerUp instanceof PowerUp.Explosion){
+			player.adjustHealth(-10);
+		}
 	}
 
 }
